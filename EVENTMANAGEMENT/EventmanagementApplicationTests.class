@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Campus Events</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="header">
+    <img src="images\Logo.png" class="logo">
+    Vel Tech Rangarajan Dr.Sagunthala R&D Institute of Science and Technology
+</div>
+<h2>Upcoming Events</h2>
+
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Type</th>
+        <th>Date</th>
+        <th>Venue</th>
+        <th>Available Seats</th>
+        <th>Action</th>
+    </tr>
+
+    <tr th:each="event : ${events}">
+        <td th:text="${event.name}"></td>
+        <td th:text="${event.department}"></td>
+        <td th:text="${event.type}"></td>
+        <td th:text="${event.date}"></td>
+        <td th:text="${event.venue}"></td>
+        <td th:text="${event.availableSeats}"></td>
+
+        <td>
+            <a th:href="@{'/register/' + ${event.id}}">
+                <button>Register</button>
+            </a>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
