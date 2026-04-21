@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Order History</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Customer Order History</h1>
+
+    <table id="orderTable">
+        <tr>
+            <th>Name</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th>Date</th>
+        </tr>
+    </table>
+</div>
+
+<script>
+fetch("http://localhost:5000/orders")
+.then(response => response.json())
+.then(data => {
+    const table = document.getElementById("orderTable");
+
+    data.forEach(order => {
+        const row = table.insertRow();
+
+        row.insertCell(0).innerText = order.name;
+        row.insertCell(1).innerText = order.product_name;
+        row.insertCell(2).innerText = order.quantity;
+        row.insertCell(3).innerText = order.price;
+        row.insertCell(4).innerText = order.total_amount;
+        row.insertCell(5).innerText = order.order_date;
+    });
+})
+.catch(error => console.log(error));
+</script>
+
+</body>
+</html>
