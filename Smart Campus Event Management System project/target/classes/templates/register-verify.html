@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Verify OTP')}"></head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <div class="container" style="display:flex; align-items:center; justify-content:center; min-height: 70vh;">
+        <div class="card animated" style="width: 100%; max-width: 500px;">
+            <h2 style="text-align:center; margin-bottom: 1.5rem;">OTP Verification</h2>
+
+            <div class="alert alert-success" th:if="${otpMessage}" th:text="${otpMessage}"></div>
+            <div class="alert alert-danger" th:if="${otpError}" th:text="${otpError}"></div>
+
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">We have sent a one-time verification code to <strong th:text="${email}"></strong>. Enter it below to complete your registration.</p>
+
+            <form th:action="@{/register/verify}" method="post">
+                <div class="form-group">
+                    <label>OTP Code</label>
+                    <input type="text" name="otp" class="form-control" placeholder="Enter 6-digit code" required maxlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Verify OTP</button>
+            </form>
+
+            <p style="text-align:center; margin-top: 1.25rem; color: var(--text-muted); font-size: 0.9rem;">
+                If you did not receive the code, please register again or contact support.
+            </p>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

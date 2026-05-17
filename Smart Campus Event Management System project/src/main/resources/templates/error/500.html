@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Server Error</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body style="display:flex; justify-content:center; align-items:center; min-height: 100vh; flex-direction:column; text-align:center;">
+    <h1 style="color:var(--danger); font-size:4rem; margin-bottom:1rem;">Opps! 500</h1>
+    <h2>Something went wrong on the server.</h2>
+    <div style="margin: 2rem; padding: 2rem; background: var(--surface); border: 1px solid var(--danger); border-radius: var(--radius); color: var(--danger); max-width: 600px;">
+        <strong>Error Details:</strong>
+        <p th:text="${error}">Unknown error.</p>
+    </div>
+    <a href="/" class="btn btn-primary">Go Back Home</a>
+</body>
+</html>

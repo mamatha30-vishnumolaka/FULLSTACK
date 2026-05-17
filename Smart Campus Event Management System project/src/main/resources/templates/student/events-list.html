@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Upcoming Events')}"></head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <div class="container animated">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+            <h2 style="margin: 0;">Discover Upcoming Events</h2>
+            <form th:action="@{/student/events}" method="get" style="display: flex; gap: 0.5rem; margin: 0;">
+                <input type="text" name="search" th:value="${search}" class="form-control" placeholder="Search by name..." style="min-width: 250px;">
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+            </form>
+        </div>
+        
+        <div th:if="${param.error}" class="alert alert-danger" th:text="${param.error}"></div>
+
+        <div class="events-grid">
+            <div th:each="event : ${events}" class="event-card">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <span class="badge" th:text="${event.type}">Type</span>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);"><i class="fa-solid fa-building"></i> <span th:text="${event.department}"></span></span>
+                </div>
+                
+                <h3 th:text="${event.title}">Event Title</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; flex-grow: 1;" th:text="${event.description}">Description...</p>
+                
+                <div style="margin: 1rem 0; font-size: 0.9rem;">
+                    <div style="margin-bottom: 0.5rem;"><i class="fa-regular fa-calendar" style="color:var(--primary); width:20px;"></i> <span th:text="${#temporals.format(event.eventDate, 'MMM dd, yyyy - HH:mm')}"></span></div>
+                    <div><i class="fa-solid fa-location-dot" style="color:var(--danger); width:20px;"></i> <span th:text="${event.location}"></span></div>
+                        <div th:if="${event.price != null and event.price > 0}"><i class="fa-solid fa-indian-rupee-sign" style="color:var(--success); width:20px;"></i> <span th:text="'₹' + ${event.price}"></span></div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">
+                        <span>Spots Filled</span>
+                        <span th:text="${event.currentRegistrations} + '/' + ${event.maxCapacity}"></span>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px;">
+                        <div th:style="'height: 100%; border-radius: 3px; background: ' + (${event.currentRegistrations} >= ${event.maxCapacity} ? 'var(--danger)' : 'var(--success)') + '; width:' + (${event.currentRegistrations} * 100 / ${event.maxCapacity}) + '%'"></div>
+                    </div>
+                </div>
+
+                <div style="display:grid; gap: 0.75rem;">
+                    <a th:href="@{/student/events/{id}(id=${event.id})}" class="btn" style="background: rgba(255,255,255,0.08);">View Details</a>
+                    <div th:if="${registeredEventIds != null and registeredEventIds.contains(event.id)}">
+                        <button class="btn" style="width: 100%; background: rgba(16,185,129,0.1); color: var(--success); cursor: default;">
+                            <i class="fa-solid fa-check"></i> Registered
+                        </button>
+                    </div>
+                    <div th:unless="${registeredEventIds != null and registeredEventIds.contains(event.id)}">
+                        <a th:if="${event.price != null and event.price > 0}"
+                           th:href="@{/student/payments/pay/event/{id}(id=${event.id})}"
+                           class="btn btn-primary" style="width: 100%;"
+                           th:text="${event.currentRegistrations >= event.maxCapacity ? 'Event Full' : 'Pay ₹200 & Register'}"
+                           th:classappend="${event.currentRegistrations >= event.maxCapacity} ? ' disabled' : ''"></a>
+                        <form th:unless="${event.price != null and event.price > 0}" th:action="@{/student/events/{id}/register(id=${event.id})}" method="post">
+                            <button type="submit" class="btn btn-primary" style="width: 100%;" 
+                                    th:disabled="${event.currentRegistrations >= event.maxCapacity}"
+                                    th:text="${event.currentRegistrations >= event.maxCapacity ? 'Event Full' : 'Register Now'}">
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div th:if="${events.empty}" style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--surface-border);">
+                <i class="fa-regular fa-face-frown" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 1rem;"></i>
+                <h3>No upcoming events right now.</h3>
+                <p style="color: var(--text-muted);">Check back later for exciting new activities and seminars!</p>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

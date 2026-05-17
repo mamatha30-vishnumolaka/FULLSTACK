@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Event Details')}"></head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <div class="container animated" style="padding-bottom: 3rem;">
+        <div style="display:flex; flex-wrap:wrap; gap: 1.5rem;">
+            <div style="flex:1 1 420px;">
+                <div class="card" style="padding: 1.75rem;">
+                    <h2 th:text="${event.title}">Event Title</h2>
+                    <p style="color: var(--text-muted);" th:text="${event.description}">Event description</p>
+
+                    <div style="display:grid; gap: 0.75rem; margin-top: 1.25rem;">
+                        <div><strong>Type:</strong> <span th:text="${event.type}"></span></div>
+                        <div><strong>Department:</strong> <span th:text="${event.department}"></span></div>
+                        <div><strong>Date & Time:</strong> <span th:text="${#temporals.format(event.eventDate, 'MMMM dd, yyyy - HH:mm')}"></span></div>
+                        <div><strong>Location:</strong> <span th:text="${event.location}"></span></div>
+                        <div><strong>Capacity:</strong> <span th:text="${event.currentRegistrations}"></span> / <span th:text="${event.maxCapacity}"></span></div>
+                        <div th:if="${event.price != null and event.price > 0}"><strong>Price:</strong> <span th:text="'₹' + ${event.price}"></span></div>
+                    </div>
+
+                    <div style="display:flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem;">
+                        <a th:href="@{/student/events}" class="btn" style="background: rgba(255,255,255,0.1);">Back to Events</a>
+                        <div th:if="${!isRegistered}">
+                            <a th:if="${event.price != null and event.price > 0}"
+                               th:href="@{/student/payments/pay/event/{id}(id=${event.id})}"
+                               class="btn btn-primary" style="min-width: 180px;">Pay ₹200 & Register</a>
+                            <form th:unless="${event.price != null and event.price > 0}" th:action="@{/student/events/{id}/register(id=${event.id})}" method="post">
+                                <button type="submit" class="btn btn-primary" style="min-width: 180px;" th:disabled="${event.currentRegistrations >= event.maxCapacity}">Register for this event</button>
+                            </form>
+                        </div>
+                        <button class="btn" style="background: rgba(16,185,129,0.1); color: var(--success); min-width: 180px;" th:if="${isRegistered}">Already Registered</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="flex:1 1 420px; display:grid; gap: 1.5rem;">
+                <div class="card" style="padding: 1.75rem;" th:if="${event.location}">
+                    <h3>Campus Map (Google Maps)</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 1rem;">This map shows the location of the event.</p>
+                    <div id="map" style="width:100%; height: 320px; border-radius: var(--radius); overflow:hidden;">
+                        <iframe width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" 
+                                th:src="@{'https://maps.google.com/maps?q=' + ${event.location} + '&output=embed'}">
+                        </iframe>
+                    </div>
+                </div>
+
+                <div class="card" style="padding: 1.75rem;">
+                    <h3>Live Weather</h3>
+                    <div id="weather-result" style="min-height: 100px; display:flex; align-items:center; justify-content:center; color: var(--text-muted);">
+                        Loading local weather forecast…
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments :: footer}"></footer>
+
+    <script th:inline="javascript">
+        const locationValue = /*[[${event.location}]]*/ 'Campus';
+        const weatherEl = document.getElementById('weather-result');
+
+        function setWeatherHtml(html) {
+            if (weatherEl) {
+                weatherEl.innerHTML = html;
+            }
+        }
+
+        function geocodeAndWeather(searchText) {
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchText)}`)
+                .then(response => response.json())
+                .then(results => {
+                    if (results && results.length) {
+                        const first = results[0];
+                        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${first.lat}&longitude=${first.lon}&current_weather=true&timezone=auto`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (!data.current_weather) {
+                                    setWeatherHtml('<div>No weather data available for this location.</div>');
+                                    return;
+                                }
+                                const weather = data.current_weather;
+                                setWeatherHtml(`<div style="text-align:center;"><div style="font-size:2rem; font-weight:700; margin-bottom:0.5rem;">${weather.temperature}°C</div><div style="color: var(--text-muted);">Wind ${weather.windspeed} km/h · Direction ${weather.winddirection}°</div><div style="margin-top:0.75rem;">Weather code: ${weather.weathercode}</div></div>`);
+                            })
+                            .catch(() => setWeatherHtml('<div>Unable to load weather details. Try later.</div>'));
+                    } else {
+                        setWeatherHtml('<div>No map location could be found for this event address.</div>');
+                    }
+                })
+                .catch(() => setWeatherHtml('<div>Unable to resolve the event location.</div>'));
+        }
+
+        if (locationValue && typeof locationValue === 'string' && locationValue.trim().length > 0) {
+            geocodeAndWeather(locationValue);
+        } else {
+            setWeatherHtml('<div>No event location provided.</div>');
+        }
+    </script>
+</body>
+</html>

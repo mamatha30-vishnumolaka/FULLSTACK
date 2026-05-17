@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('My Payments')}"></head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <div class="container animated">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+            <h2>💳 My Event Payments</h2>
+            <a th:href="@{/student/events}" class="btn btn-primary">Back to Events</a>
+        </div>
+
+        <div th:if="${param.success != null or success != null}" class="alert alert-success" th:text="${success != null ? success : '✓ Payment completed successfully!'}"></div>
+        <div th:if="${param.error != null or error != null}" class="alert alert-danger" th:text="${error != null ? error : param.error}"></div>
+
+        <div class="card">
+            <h3 style="margin-bottom: 1rem;">📋 Your Event Registrations & Payment Status</h3>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event Name</th>
+                            <th>Event Date</th>
+                            <th>Amount (₹)</th>
+                            <th>Payment Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="registration : ${registrations}">
+                            <td><strong th:text="${registration.event.title}"></strong></td>
+                            <td th:text="${#temporals.format(registration.event.eventDate, 'MMM dd, yyyy HH:mm')}"></td>
+                            <td style="font-weight: bold; color: var(--primary);" th:text="${registration.event.price > 0 ? '₹' + registration.event.price : '₹0 (FREE)'}"></td>
+                            <td>
+                                <span th:if="${registration.event.price == 0}" class="badge" style="background: rgba(16,185,129,0.2); color: var(--success); padding: 0.4rem 0.8rem; border-radius: 4px;">✓ FREE</span>
+                                <span th:if="${registration.event.price > 0 and #lists.isEmpty(registration.payments)}" class="badge" style="background: rgba(239,68,68,0.2); color: var(--danger); padding: 0.4rem 0.8rem; border-radius: 4px;">⏳ PENDING</span>
+                                <span th:if="${registration.event.price > 0 and !#lists.isEmpty(registration.payments)}" class="badge" style="background: rgba(16,185,129,0.2); color: var(--success); padding: 0.4rem 0.8rem; border-radius: 4px;">✓ PAID</span>
+                            </td>
+                            <td>
+                                <a th:if="${registration.event.price > 0 and #lists.isEmpty(registration.payments)}" th:href="@{/student/payments/pay/{id}(id=${registration.id})}" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.9rem;">💳 Pay Now</a>
+                                <span th:if="${registration.event.price == 0 or !#lists.isEmpty(registration.payments)}" class="btn" style="background: rgba(255,255,255,0.1); cursor: default; padding: 0.4rem 0.8rem; font-size: 0.9rem;">—</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${registrations.empty}">
+                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">📌 No registrations found. Register for an event first!</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

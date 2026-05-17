@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - Smart Campus'">Smart Campus Events</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<nav th:fragment="navbar">
+    <a th:href="@{/}" class="brand"><i class="fa-solid fa-graduation-cap"></i> SmartCampus</a>
+    <ul>
+        <li sec:authorize="!isAuthenticated()">
+            <a th:href="@{/login}">Login</a>
+        </li>
+        <li sec:authorize="!isAuthenticated()">
+            <a th:href="@{/register}" class="btn btn-primary">Register</a>
+        </li>
+        
+        <!-- Student Links -->
+        <li sec:authorize="hasRole('STUDENT')">
+            <a th:href="@{/student/events}">Upcoming Events</a>
+        </li>
+        <li sec:authorize="hasRole('STUDENT')">
+            <a th:href="@{/student/events/my-events}">My Registrations</a>
+        </li>
+        <li sec:authorize="hasRole('STUDENT')">
+            <a th:href="@{/student/payments}">My Payments</a>
+        </li>
+        
+        <!-- Admin Links -->
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin/events}">Manage Events</a>
+        </li>
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin/events/payments}">View Payments</a>
+        </li>
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin/events/stats}">Insights & Stats</a>
+        </li>
+        <li sec:authorize="isAuthenticated()">
+            <a th:href="@{/innovation}">Innovation Lab</a>
+        </li>
+        
+        <li sec:authorize="isAuthenticated()" style="display:flex; align-items:center; gap: 1rem;">
+            <a th:href="@{/profile}" style="color: var(--text-muted); font-size: 0.9rem;">
+                <i class="fa-solid fa-user"></i> <span sec:authentication="name"></span>
+            </a>
+            <form th:action="@{/logout}" method="post" style="margin:0;">
+                <button type="submit" class="btn" style="background: transparent; color: var(--text-muted); padding: 0;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </form>
+        </li>
+    </ul>
+</nav>
+
+<footer th:fragment="footer" style="text-align: center; padding: 2rem; color: var(--text-muted); border-top: 1px solid var(--surface-border); margin-top: auto;">
+    &copy; 2026 Smart Campus Event Management System.
+    
+    <!-- Alarm UI & Audio -->
+    <div sec:authorize="isAuthenticated()" id="alarm-toast" style="display:none; position:fixed; bottom:20px; right:20px; background:var(--danger); color:white; padding:1.5rem; border-radius:12px; box-shadow:0 10px 25px rgba(239, 68, 68,0.5); z-index:9999; animation: fadeIn 0.5s;">
+        <h3 style="margin:0 0 10px 0;"><i class="fa-solid fa-bell fa-shake"></i> Event Starting!</h3>
+        <p id="alarm-message" style="margin:0;">Your event is starting now.</p>
+        <button onclick="document.getElementById('alarm-toast').style.display='none'" style="margin-top:15px; background:rgba(255,255,255,0.2); border:none; color:white; padding:5px 15px; border-radius:5px; cursor:pointer;">Dismiss</button>
+    </div>
+
+    <script sec:authorize="isAuthenticated()">
+        let alarmTriggered = false;
+        function checkAlarms() {
+            if(alarmTriggered) return;
+            fetch('/api/notifications/check')
+                .then(res => res.json())
+                .then(data => {
+                    if(data.alert) {
+                        alarmTriggered = true;
+                        document.getElementById('alarm-message').innerText = data.message;
+                        document.getElementById('alarm-toast').style.display = 'block';
+                        // Play loud alarm beep
+                        const audio = new Audio('https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg');
+                        audio.play();
+                    }
+                }).catch(err => console.error(err));
+        }
+        // Check every 10 seconds checking if an event is due
+        setInterval(checkAlarms, 10000);
+        setTimeout(checkAlarms, 1000); // Check perfectly on load
+    </script>
+</footer>
+
+    <!-- Chatbot UI -->
+    <div id="chatbot-container" style="position:fixed; bottom:20px; right:20px; z-index:9998;">
+        <button id="chatbot-toggle" style="background:var(--primary); color:white; border:none; border-radius:50%; width:60px; height:60px; font-size:1.5rem; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.3);"><i class="fa-solid fa-comments"></i></button>
+        <div id="chatbot-window" style="display:none; position:absolute; bottom:80px; right:0; width:300px; height:400px; background:var(--surface); border:1px solid var(--surface-border); border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.5); flex-direction:column; overflow:hidden;">
+            <div style="background:var(--primary); color:white; padding:1rem; font-weight:bold; display:flex; justify-content:space-between; align-items:center;">
+                <span>Support Bot</span>
+                <button onclick="document.getElementById('chatbot-window').style.display='none'" style="background:transparent; border:none; color:white; cursor:pointer;"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div id="chatbot-messages" style="flex:1; padding:1rem; overflow-y:auto; display:flex; flex-direction:column; gap:0.5rem; font-size:0.9rem;">
+                <div style="background:var(--surface-light); padding:0.8rem; border-radius:8px; align-self:flex-start; max-width:80%;">Hello! How can I help you today?</div>
+            </div>
+            <div style="padding:0.5rem; border-top:1px solid var(--surface-border); display:flex; gap:0.5rem;">
+                <input type="text" id="chatbot-input" placeholder="Type a message..." style="flex:1; padding:0.5rem; border-radius:4px; border:1px solid var(--surface-border); background:var(--surface-light); color:var(--text);">
+                <button id="chatbot-send" style="background:var(--primary); color:white; border:none; padding:0.5rem 1rem; border-radius:4px; cursor:pointer;"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('chatbot-toggle').onclick = () => {
+            const win = document.getElementById('chatbot-window');
+            win.style.display = win.style.display === 'none' ? 'flex' : 'none';
+        };
+        document.getElementById('chatbot-send').onclick = sendBotMessage;
+        document.getElementById('chatbot-input').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendBotMessage(); });
+
+        function sendBotMessage() {
+            const input = document.getElementById('chatbot-input');
+            const msg = input.value.trim();
+            if(!msg) return;
+            addChatMsg(msg, 'user');
+            input.value = '';
+            
+            setTimeout(() => {
+                let reply = "I'm sorry, I don't understand that. You can ask about events, payment, or OTP.";
+                let lmsg = msg.toLowerCase();
+                if(lmsg.includes('event')) reply = "We have 15 amazing events available! Check out the Upcoming Events page.";
+                if(lmsg.includes('pay') || lmsg.includes('price')) reply = "All our events have a fixed price of ₹200. We support Razorpay securely.";
+                if(lmsg.includes('otp')) reply = "OTP is sent to your email during registration. For demo purposes, the code is shown on screen.";
+                if(lmsg.includes('hi') || lmsg.includes('hello')) reply = "Hi there! Welcome to Smart Campus. Need help?";
+                addChatMsg(reply, 'bot');
+            }, 500);
+        }
+
+        function addChatMsg(msg, sender) {
+            const container = document.getElementById('chatbot-messages');
+            const div = document.createElement('div');
+            div.textContent = msg;
+            div.style.padding = '0.8rem';
+            div.style.borderRadius = '8px';
+            div.style.maxWidth = '80%';
+            div.style.marginBottom = '0.5rem';
+            if(sender === 'user') {
+                div.style.background = 'var(--primary)';
+                div.style.color = 'white';
+                div.style.alignSelf = 'flex-end';
+            } else {
+                div.style.background = 'var(--surface-light)';
+                div.style.color = 'var(--text)';
+                div.style.alignSelf = 'flex-start';
+            }
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+    </script>
+
+</body>
+</html>

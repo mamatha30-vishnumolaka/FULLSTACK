@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('My Registrations')}"></head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <div class="container animated">
+        <h2 style="margin-bottom: 2rem;"><i class="fa-solid fa-ticket" style="color:var(--primary);"></i> My Registered Events</h2>
+
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div class="card">
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event Name</th>
+                            <th>Date & Time</th>
+                            <th>Location</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="reg : ${registrations}">
+                            <td th:text="${reg.event.title}" style="font-weight: 600; color: var(--text);"></td>
+                            <td th:text="${#temporals.format(reg.event.eventDate, 'MMM dd, yyyy HH:mm')}"></td>
+                            <td><i class="fa-solid fa-location-dot" style="color: var(--danger); margin-right:5px;"></i> <span th:text="${reg.event.location}"></span></td>
+                            <td><span class="badge" th:text="${reg.event.type}"></span></td>
+                            <td>
+                                <span style="color: var(--success); font-weight: 500;"><i class="fa-solid fa-circle-check"></i> Confirmed</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${registrations.empty}">
+                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                                You haven't registered for any events yet. <br>
+                                <a th:href="@{/student/events}" style="color: var(--primary); text-decoration: none; margin-top: 0.5rem; display: inline-block;">Browse Events</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

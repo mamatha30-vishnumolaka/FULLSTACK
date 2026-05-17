@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Payment Successful')}"></head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <div class="container animated" style="max-width: 700px; margin: 3rem auto;">
+        <div class="card">
+            <h2>Payment Successful</h2>
+            <p class="alert alert-success" style="margin-top: 1rem;">✓ Your payment has been completed successfully.</p>
+            <div class="card" style="background: rgba(255,255,255,0.04); padding: 1.5rem; margin-top: 1.5rem;">
+                <h3>Payment Details</h3>
+                <p th:if="${eventTitle}" style="margin-top: 0.5rem;"><strong>Event:</strong> <span th:text="${eventTitle}"></span></p>
+                <p style="margin-top: 0.5rem; color: var(--text-muted);">You can view your registration and payment status on the payments page.</p>
+            </div>
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <a th:href="@{/student/payments}" class="btn btn-primary">Go to My Payments</a>
+                <a th:href="@{/student/events}" class="btn" style="background: rgba(255,255,255,0.1);">Back to Events</a>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Register')}"></head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <div class="container" style="display:flex; align-items:center; justify-content:center; min-height: 70vh;">
+        <div class="card animated" style="width: 100%; max-width: 500px;">
+            <h2 style="text-align:center; margin-bottom: 1.5rem;">Join Smart Campus</h2>
+            
+            <form th:action="@{/register}" th:object="${user}" method="post">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" th:field="*{name}" class="form-control" placeholder="John Doe">
+                    <div class="error-text" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" th:field="*{username}" class="form-control" placeholder="johndoe123">
+                    <div class="error-text" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" th:field="*{email}" class="form-control" placeholder="john@student.edu">
+                    <div class="error-text" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Department</label>
+                    <select th:field="*{department}" class="form-control">
+                        <option value="">-- Select Department --</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Business">Business</option>
+                    </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Year of Study</label>
+                        <select th:field="*{academicYear}" class="form-control">
+                            <option value="">-- Select Year --</option>
+                            <option value="1st Year">1st Year</option>
+                            <option value="2nd Year">2nd Year</option>
+                            <option value="3rd Year">3rd Year</option>
+                            <option value="4th Year">4th Year</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Branch/Specialization</label>
+                        <select th:field="*{branch}" class="form-control">
+                            <option value="">-- Select Branch --</option>
+                            <option value="CSE">CSE (Computer Science)</option>
+                            <option value="ECE">ECE (Electronics)</option>
+                            <option value="Mechanical">Mechanical Engineering</option>
+                            <option value="Civil">Civil Engineering</option>
+                            <option value="AI/ML">AI/ML</option>
+                            <option value="Data Science">Data Science</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" th:field="*{password}" class="form-control" placeholder="Create a strong password">
+                    <div class="error-text" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Register Account</button>
+            </form>
+            <p style="text-align:center; margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;">
+                After submitting your details, you will verify your account using a one-time password (OTP).
+            </p>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

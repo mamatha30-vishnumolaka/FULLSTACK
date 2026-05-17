@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Event Form')}"></head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <div class="container animated">
+        <div class="card" style="max-width: 800px; margin: 0 auto;">
+            <h2 th:text="${event.id == null ? 'Create New Event' : 'Edit Event'}">Create Event</h2>
+            
+            <form th:action="${event.id == null ? '/admin/events/create' : '/admin/events/edit/' + event.id}" th:object="${event}" method="post">
+                <input type="hidden" th:field="*{id}" />
+                
+                <div class="form-group">
+                    <label>Event Title</label>
+                    <input type="text" th:field="*{title}" class="form-control" placeholder="e.g. Spring Boot Mastery">
+                    <div class="error-text" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea th:field="*{description}" class="form-control" rows="4" placeholder="Event details..."></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Date and Time</label>
+                        <input type="datetime-local" th:field="*{eventDate}" class="form-control">
+                        <div class="error-text" th:if="${#fields.hasErrors('eventDate')}" th:errors="*{eventDate}"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Max Capacity</label>
+                        <input type="number" th:field="*{maxCapacity}" class="form-control" min="1">
+                        <div class="error-text" th:if="${#fields.hasErrors('maxCapacity')}" th:errors="*{maxCapacity}"></div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Event Type</label>
+                        <select th:field="*{type}" class="form-control">
+                            <option value="Workshop">Workshop</option>
+                            <option value="Seminar">Seminar</option>
+                            <option value="Activity">Activity</option>
+                        </select>
+                        <div class="error-text" th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Department</label>
+                        <select th:field="*{department}" class="form-control">
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Data Science">Data Science</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Business">Business</option>
+                            <option value="General">General</option>
+                        </select>
+                        <div class="error-text" th:if="${#fields.hasErrors('department')}" th:errors="*{department}"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" th:field="*{location}" class="form-control" placeholder="e.g. Room 402, Building A">
+                    <div class="error-text" th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Event Price (USD)</label>
+                    <input type="number" step="0.01" th:field="*{price}" class="form-control" placeholder="0.00 (leave 0 for free)">
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save Event</button>
+                    <a th:href="@{/admin/events}" class="btn" style="background: rgba(255,255,255,0.1); color: var(--text);">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Implementation Steps')}"></head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <div class="container animated" style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center;">
+        <div class="steps-container" style="max-width: 800px; margin: 0 auto; width: 100%;">
+            <div style="text-align: center; margin-bottom: 3rem;">
+                <h1 style="background: linear-gradient(to right, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 2.5rem; margin-bottom: 1rem;">Welcome to Smart Campus</h1>
+                <p style="color: var(--text-muted); font-size: 1.1rem;">Follow these step-by-step instructions to get started.</p>
+            </div>
+
+            <div class="step-item" style="background: var(--surface); border: 1px solid var(--surface-border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1.5rem; transition: transform 0.3s ease;">
+                <div class="step-number" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; flex-shrink: 0; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);">1</div>
+                <div class="step-content">
+                    <h3 style="margin-top: 0; color: var(--text); margin-bottom: 0.5rem; font-size: 1.3rem;">Explore Dashboard</h3>
+                    <p style="color: var(--text-muted); margin: 0; line-height: 1.6;">After proceeding, you will be taken to your personalized dashboard based on your assigned role (Admin or Student).</p>
+                </div>
+            </div>
+
+            <div class="step-item" style="background: var(--surface); border: 1px solid var(--surface-border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1.5rem; transition: transform 0.3s ease;">
+                <div class="step-number" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; flex-shrink: 0; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);">2</div>
+                <div class="step-content">
+                    <h3 style="margin-top: 0; color: var(--text); margin-bottom: 0.5rem; font-size: 1.3rem;">Browse & Manage Events</h3>
+                    <p style="color: var(--text-muted); margin: 0; line-height: 1.6;">View upcoming campus events. If you are an Admin, you can create, update, and manage events. Students can browse and search based on specific filters.</p>
+                </div>
+            </div>
+
+            <div class="step-item" style="background: var(--surface); border: 1px solid var(--surface-border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1.5rem; transition: transform 0.3s ease;">
+                <div class="step-number" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; flex-shrink: 0; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);">3</div>
+                <div class="step-content">
+                    <h3 style="margin-top: 0; color: var(--text); margin-bottom: 0.5rem; font-size: 1.3rem;">Register Seamlessly</h3>
+                    <p style="color: var(--text-muted); margin: 0; line-height: 1.6;">Find an event that interests you and register instantly. All your registrations are tracked seamlessly under your 'My Registrations' tab.</p>
+                </div>
+            </div>
+
+            <div class="step-item" style="background: var(--surface); border: 1px solid var(--surface-border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1.5rem; transition: transform 0.3s ease;">
+                <div class="step-number" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; flex-shrink: 0; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);">4</div>
+                <div class="step-content">
+                    <h3 style="margin-top: 0; color: var(--text); margin-bottom: 0.5rem; font-size: 1.3rem;">Stay Notified</h3>
+                    <p style="color: var(--text-muted); margin: 0; line-height: 1.6;">Leave the portal open and receive automated dashboard alerts and audio notifications when an event you registered for is about to begin.</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;">
+                <a th:href="@{/dashboard}" class="btn btn-primary" style="padding: 1rem 2.5rem; font-size: 1.1rem; box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);">
+                    Continue to Dashboard <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments :: footer}"></footer>
+    
+    <style>
+        .step-item:hover {
+            transform: translateY(-5px) !important;
+            border-color: var(--primary) !important;
+        }
+    </style>
+</body>
+</html>

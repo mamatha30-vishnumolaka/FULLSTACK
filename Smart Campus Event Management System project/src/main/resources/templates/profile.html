@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('My Profile')}"></head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <div class="container animated">
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <h2 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-user-pen" style="color:var(--primary);"></i> Edit My Profile</h2>
+            
+            <div th:if="${param.success_profile}" class="alert alert-success">
+                <i class="fa-solid fa-circle-check"></i> Profile updated successfully!
+            </div>
+            
+            <form th:action="@{/profile}" method="post">
+                <div class="form-group">
+                    <label>Username (Cannot be changed)</label>
+                    <input type="text" th:value="${user.username}" class="form-control" disabled style="background: rgba(255,255,255,0.05); color: var(--text-muted);">
+                </div>
+
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="name" th:value="${user.name}" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" th:value="${user.email}" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Department</label>
+                    <select name="department" class="form-control">
+                        <option value="Computer Science" th:selected="${user.department == 'Computer Science'}">Computer Science</option>
+                        <option value="Data Science" th:selected="${user.department == 'Data Science'}">Data Science</option>
+                        <option value="Engineering" th:selected="${user.department == 'Engineering'}">Engineering</option>
+                        <option value="Business" th:selected="${user.department == 'Business'}">Business</option>
+                        <option value="IT" th:selected="${user.department == 'IT'}">IT</option>
+                        <option value="General" th:selected="${user.department == 'General'}">General</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Change Password (Leave blank to keep current)</label>
+                    <input type="password" name="password" class="form-control" placeholder="New Password...">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

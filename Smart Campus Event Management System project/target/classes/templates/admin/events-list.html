@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Manage Events')}"></head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <div class="container animated">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+            <h2>Manage Campus Events</h2>
+            <a th:href="@{/admin/events/create}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add New Event</a>
+        </div>
+
+        <div th:if="${param.success}" class="alert alert-success">Event created successfully!</div>
+        <div th:if="${param.updated}" class="alert alert-success">Event updated successfully!</div>
+        <div th:if="${param.deleted}" class="alert alert-success">Event deleted successfully!</div>
+
+        <!-- Filters -->
+        <div class="card" style="margin-bottom: 2rem; padding: 1.5rem;">
+            <form th:action="@{/admin/events}" method="get" style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+                <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
+                    <label>Search Title</label>
+                    <input type="text" name="search" th:value="${search}" class="form-control" placeholder="Search events...">
+                </div>
+                <div class="form-group" style="margin: 0; flex: 1; min-width: 150px;">
+                    <label>Event Type</label>
+                    <select name="type" class="form-control">
+                        <option value="">All Types</option>
+                        <option value="Workshop" th:selected="${type == 'Workshop'}">Workshop</option>
+                        <option value="Seminar" th:selected="${type == 'Seminar'}">Seminar</option>
+                        <option value="Activity" th:selected="${type == 'Activity'}">Activity</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin: 0; flex: 1; min-width: 150px;">
+                    <label>Department</label>
+                    <select name="department" class="form-control">
+                        <option value="">All Departments</option>
+                        <option value="Computer Science" th:selected="${department == 'Computer Science'}">Computer Science</option>
+                        <option value="Data Science" th:selected="${department == 'Data Science'}">Data Science</option>
+                        <option value="Engineering" th:selected="${department == 'Engineering'}">Engineering</option>
+                        <option value="Business" th:selected="${department == 'Business'}">Business</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="height: 48px;">Filter</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Date & Time</th>
+                            <th>Type</th>
+                            <th>Dept</th>
+                            <th>Capacity</th>
+                            <th>Price</th>
+                            <th>Location</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="event : ${events}">
+                            <td th:text="${event.title}"></td>
+                            <td th:text="${#temporals.format(event.eventDate, 'MMM dd, yyyy HH:mm')}"></td>
+                            <td><span class="badge" th:text="${event.type}"></span></td>
+                            <td th:text="${event.department}"></td>
+                            <td>
+                                <span th:text="${event.currentRegistrations} + ' / ' + ${event.maxCapacity}"></span>
+                                <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); margin-top: 4px; border-radius: 2px;">
+                                    <div style="height: 100%; background: var(--primary); border-radius: 2px;"
+                                         th:style="'width:' + (${event.currentRegistrations} * 100 / ${event.maxCapacity}) + '%'"></div>
+                                </div>
+                            </td>
+                            <td th:text="'$' + ${event.price}"></td>
+                            <td th:text="${event.location}"></td>
+                            <td>
+                                <a th:href="@{/admin/events/edit/{id}(id=${event.id})}" class="btn" style="padding: 0.4rem 0.8rem; background: rgba(255,255,255,0.1);"><i class="fa-solid fa-pen"></i></a>
+                                <a th:href="@{/admin/events/delete/{id}(id=${event.id})}" class="btn btn-danger" style="padding: 0.4rem 0.8rem;" onclick="return confirm('Are you sure you want to delete this event?');"><i class="fa-solid fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        <tr th:if="${events.empty}">
+                            <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2rem;">No events found.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

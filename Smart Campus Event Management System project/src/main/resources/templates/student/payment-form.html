@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Make Payment')}"></head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <div class="container animated">
+        <div class="card" style="max-width: 700px; margin: 0 auto;">
+            <h2>Complete Payment</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Enter your details and complete the secure payment for your event registration.</p>
+
+            <div class="card" style="background: rgba(255,255,255,0.04); padding: 1.5rem; margin-bottom: 2rem;">
+                    <h3 th:text="${event.title}">Event Title</h3>
+                    <div style="display: grid; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">
+                        <div><strong>Date:</strong> <span th:text="${#temporals.format(event.eventDate, 'MMMM dd, yyyy - HH:mm')}"></span></div>
+                        <div><strong>Location:</strong> <span th:text="${event.location}"></span></div>
+                        <div><strong>Amount to Pay:</strong> <span style="font-size: 1.3rem; color: var(--primary); font-weight: bold;" th:text="'₹' + ${amount}"></span></div>
+                    </div>
+                </div>
+            <div class="card" style="background: rgba(255,255,255,0.04); padding: 1.5rem; margin-bottom: 2rem;">
+                <h4 style="margin-bottom: 1rem;">Student Information</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.9rem; color: var(--text-muted);">
+                    <div><strong>Name:</strong> <p th:text="${user.name}"></p></div>
+                    <div><strong>Email:</strong> <p th:text="${user.email}"></p></div>
+                    <div><strong>Department:</strong> <p th:text="${user.department} ?: 'Not specified'"></p></div>
+                    <div><strong>Year:</strong> <p th:text="${user.academicYear} ?: 'Not specified'"></p></div>
+                    <div><strong>Branch:</strong> <p th:text="${user.branch} ?: 'Not specified'"></p></div>
+                </div>
+            </div>
+
+            <form th:action="${paymentAction}" method="post">
+                <h4 style="margin-bottom: 1rem;">Payment Details</h4>
+                <div th:if="${qrCodeError}" class="alert alert-danger" th:text="${qrCodeError}" style="margin-bottom: 1rem;"></div>
+                <div class="form-group">
+                    <label>Select Payment Method *</label>
+                    <select name="paymentMethod" id="paymentMethod" class="form-control" required>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Debit Card">Debit Card</option>
+                    </select>
+                </div>
+
+                <div id="paymentNotice" class="alert alert-info" style="margin-top: 1rem; display: none;"></div>
+
+                <div id="qrCodeSection" style="display: none; margin-top: 1.5rem;">
+                    <div class="card" style="background: rgba(255,255,255,0.04); padding: 1.5rem;">
+                        <h4 style="margin-bottom: 1rem;">Scan QR Code to Pay</h4>
+                        <div style="text-align: center;">
+                            <img id="qrCodeImage" src="" alt="Payment QR Code" style="max-width: 250px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" />
+                            <p id="qrInstructions" style="margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" name="amount" th:value="${amount}" />
+
+                <div id="paymentNotice" class="alert alert-info" style="margin-top: 1rem; display: none;"></div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" id="confirmPaymentBtn" class="btn btn-primary" style="flex: 1; display: none;">Confirm Payment</button>
+                    <a th:href="@{/student/payments}" class="btn" style="background: rgba(255,255,255,0.1);">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments :: footer}"></footer>
+
+    <script th:inline="javascript">
+        var paymentData = {
+            "Credit Card": {
+                qr: /*[[${creditCardQRCode}]]*/ '',
+                instructions: /*[[${creditCardInstructions}]]*/ ''
+            },
+            "Debit Card": {
+                qr: /*[[${cardQRCode}]]*/ '',
+                instructions: /*[[${cardInstructions}]]*/ ''
+            }
+        };
+
+        var razorpayEnabled = /*[[${razorpayAvailable}]]*/ false;
+
+        var paymentMethodSelect = document.getElementById('paymentMethod');
+        var qrCodeSection = document.getElementById('qrCodeSection');
+        var qrCodeImage = document.getElementById('qrCodeImage');
+        var qrInstructions = document.getElementById('qrInstructions');
+        var paymentNotice = document.getElementById('paymentNotice');
+        var confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
+
+        function updatePaymentUI() {
+            var method = paymentMethodSelect.value;
+            var data = paymentData[method];
+            if (data && data.qr) {
+                qrCodeImage.src = data.qr;
+                qrInstructions.textContent = data.instructions || 'Scan this QR code to complete the payment.';
+                qrCodeSection.style.display = 'block';
+            } else {
+                qrCodeSection.style.display = 'none';
+                qrInstructions.textContent = '';
+            }
+            confirmPaymentBtn.style.display = 'inline-flex';
+            paymentNotice.style.display = 'block';
+            paymentNotice.innerHTML = '<strong>✓ Secure Payment:</strong> Scan the QR code to complete your payment.';
+        }
+
+        paymentMethodSelect.addEventListener('change', updatePaymentUI);
+        updatePaymentUI();
+    </script>
+</body>
+</html>

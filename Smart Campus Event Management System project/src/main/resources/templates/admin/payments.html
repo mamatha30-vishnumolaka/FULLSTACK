@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Payment Management')}"></head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <div class="container animated">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 2rem;">
+            <h2>💳 Payment Management Dashboard</h2>
+            <a th:href="@{/admin/events}" class="btn btn-primary">Back to Events</a>
+        </div>
+
+        <!-- Payment Summary Cards -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+            <div class="card" style="padding: 1rem; background: rgba(16,185,129,0.1);">
+                <div style="font-size: 2rem; color: var(--success);">✓</div>
+                <div style="font-size: 0.9rem; color: var(--text-muted);">Completed Payments</div>
+                <div style="font-size: 1.8rem; font-weight: bold;" th:text="${completedPayments}"></div>
+            </div>
+            <div class="card" style="padding: 1rem; background: rgba(239,68,68,0.1);">
+                <div style="font-size: 2rem; color: var(--danger);">⏳</div>
+                <div style="font-size: 0.9rem; color: var(--text-muted);">Pending Payments</div>
+                <div style="font-size: 1.8rem; font-weight: bold;" th:text="${pendingPayments}"></div>
+            </div>
+            <div class="card" style="padding: 1rem; background: rgba(59,130,246,0.1);">
+                <div style="font-size: 2rem; color: var(--primary);">👥</div>
+                <div style="font-size: 0.9rem; color: var(--text-muted);">Total Registrations</div>
+                <div style="font-size: 1.8rem; font-weight: bold;" th:text="${totalRegistrations}"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-bottom: 1rem;">Student Payment Records</h3>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event Name</th>
+                            <th>Student Name</th>
+                            <th>Email</th>
+                            <th>Department</th>
+                            <th>Year</th>
+                            <th>Branch</th>
+                            <th>Amount (₹)</th>
+                            <th>Payment Method</th>
+                            <th>Status</th>
+                            <th>Transaction ID</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <th:block th:each="payment : ${payments}">
+                        <tr>
+                            <td th:text="${payment.registration.event.title}"></td>
+                            <td><strong th:text="${payment.registration.user.name}"></strong></td>
+                            <td th:text="${payment.registration.user.email}"></td>
+                            <td th:text="${payment.registration.user.department} ?: '-'"></td>
+                            <td th:text="${payment.registration.user.academicYear} ?: '-'"></td>
+                            <td th:text="${payment.registration.user.branch} ?: '-'"></td>
+                            <td style="font-weight: bold;" th:text="${payment.amount}"></td>
+                            <td th:text="${payment.paymentMethod}"></td>
+                            <td>
+                                <span th:if="${payment.status == 'COMPLETED'}" class="badge" style="background: rgba(16,185,129,0.2); color: var(--success); padding: 0.4rem 0.8rem; border-radius: 4px; font-weight: bold;">✓ PAID</span>
+                                <span th:if="${payment.status == 'PENDING'}" class="badge" style="background: rgba(239,68,68,0.2); color: var(--danger); padding: 0.4rem 0.8rem; border-radius: 4px; font-weight: bold;">⏳ PENDING</span>
+                                <span th:if="${payment.status == 'FAILED'}" class="badge" style="background: rgba(239,68,68,0.2); color: var(--danger); padding: 0.4rem 0.8rem; border-radius: 4px; font-weight: bold;">✗ FAILED</span>
+                            </td>
+                            <td style="font-size: 0.85rem;" th:text="${payment.transactionId} ?: '-'"></td>
+                            <td th:text="${#temporals.format(payment.paymentDate, 'MMM dd, yyyy HH:mm')}"></td>
+                        </tr>
+                    </th:block>
+                        <tr th:if="${payments.empty}">
+                            <td colspan="11" style="text-align: center; color: var(--text-muted); padding: 2rem;">📋 No payment records found. Students haven't made any payments yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Registration Stats')}"></head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <div class="container animated">
+        <h2>Registration Analytics</h2>
+        
+        <div class="stats-grid">
+            <div class="card stat-card">
+                <i class="fa-solid fa-calendar-check" style="color: var(--primary); font-size: 2rem; margin-bottom: 1rem;"></i>
+                <h2 th:text="${totalEvents}">0</h2>
+                <div style="color: var(--text-muted);">Total Events</div>
+            </div>
+            <div class="card stat-card">
+                <i class="fa-solid fa-users" style="color: var(--secondary); font-size: 2rem; margin-bottom: 1rem;"></i>
+                <h2 th:text="${totalRegistrations}">0</h2>
+                <div style="color: var(--text-muted);">Total Registrations</div>
+            </div>
+            <div class="card stat-card">
+                <i class="fa-solid fa-dollar-sign" style="color: var(--success); font-size: 2rem; margin-bottom: 1rem;"></i>
+                <h2 th:text="${totalPayments}">0</h2>
+                <div style="color: var(--text-muted);">Total Payments</div>
+            </div>
+            <div class="card stat-card">
+                <i class="fa-solid fa-chart-pie" style="color: var(--primary); font-size: 2rem; margin-bottom: 1rem;"></i>
+                <h2 th:text="${totalEvents > 0 ? (totalRegistrations / totalEvents) : 0}">0</h2>
+                <div style="color: var(--text-muted);">Avg. Reg. per Event</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Registrations per Event</h3>
+            <!-- Chart.js Canvas -->
+            <canvas id="registrationChart" height="100"></canvas>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments :: footer}"></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const eventsData = /*[[${events}]]*/ [];
+        
+        const labels = eventsData.map(e => e.title);
+        const data = eventsData.map(e => e.currentRegistrations);
+        
+        const ctx = document.getElementById('registrationChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Registrations',
+                    data: data,
+                    backgroundColor: 'rgba(79, 70, 229, 0.6)',
+                    borderColor: 'rgba(79, 70, 229, 1)',
+                    borderWidth: 1,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#94a3b8',
+                            stepSize: 1
+                        },
+                        grid: {
+                            color: 'rgba(255,255,255,0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#94a3b8'
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#f8fafc'
+                        }
+                    }
+                }
+            }
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Login OTP Verification')}"></head>
+<body>
+    <nav th:replace="~{fragments :: navbar}"></nav>
+
+    <div class="container animated" style="min-height: calc(100vh - 200px); display: flex; align-items: center; justify-content: center;">
+        <div class="card" style="width: 100%; max-width: 450px;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2 style="font-size: 2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Two-Step Verification</h2>
+                <p style="color: var(--text-muted);">Please verify your identity</p>
+            </div>
+
+            <div th:if="${otpMessage}" class="alert alert-info" th:text="${otpMessage}"></div>
+            <div th:if="${otpError}" class="alert alert-danger" th:text="${otpError}"></div>
+
+            <form th:action="@{/login/otp}" method="post">
+                <div class="form-group">
+                    <label>Enter 6-Digit OTP</label>
+                    <input type="text" name="otp" class="form-control" required placeholder="123456" pattern="[0-9]{6}" maxlength="6">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Verify & Login</button>
+            </form>
+            
+            <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+                Didn't receive code? <a href="/login/otp" style="color: var(--primary);">Resend OTP</a>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>
