@@ -1,0 +1,13 @@
+<script>
+const order = JSON.parse(localStorage.getItem("order"));
+
+if (order) {
+  document.getElementById("track-id").innerText = "Order ID: " + order.id;
+  document.getElementById("status").innerText = order.status;
+} else {
+  document.body.innerHTML = "<h2>No order found ❌</h2>";
+}
+</script>
+<a href="track.html">
+  <button>Track Order</button>
+</a>
