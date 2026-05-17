@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Order Success</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="success-body">
+
+<div class="success-box">
+  <h1>🎉 Order Placed Successfully!</h1>
+  <p>Your order has been confirmed.</p>
+
+  <h3 id="order-id"></h3>
+
+  <button onclick="goToTrack()">Track Order</button>
+</div>
+
+<script>
+const orderId = localStorage.getItem("orderId");
+document.getElementById("order-id").innerText = "Order ID: " + orderId;
+
+function goToTrack() {
+  window.location.href = "track.html";
+}
+</script>
+
+</body>
+</html>

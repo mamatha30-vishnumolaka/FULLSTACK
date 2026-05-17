@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NexusShop</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <!-- Responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+
+<!-- 🔥 NAVBAR -->
+<header class="navbar">
+  <div class="logo">📦 NexusShop</div>
+  
+
+  <input type="text" placeholder="Search products..." class="search"/>
+
+  <div class="icons">
+    <i class="fa fa-moon"></i>
+    <i class="fa fa-heart"></i>
+    <i class="fa fa-shopping-cart" onclick="goToCart()"></i>
+
+    <!-- 👤 USER SECTION -->
+    <span id="user-section">
+      <i class="fa fa-user" onclick="goToLogin()"></i>
+    </span>
+  </div>
+</header>
+
+<!-- 🔥 TITLE -->
+<section class="title">
+  <h1>Discover Products</h1>
+  <p>Browse our curated collection of premium goods.</p>
+</section>
+
+<!-- 🔥 FILTER BUTTONS -->
+<div class="filters">
+  <button class="active">All</button>
+  <button>Electronics</button>
+  <button>Furniture</button>
+  <button>Accessories</button>
+</div>
+
+<!-- 🔥 PRODUCTS -->
+<div id="products" class="products"></div>
+
+<!-- 🔥 SCRIPT -->
+<script src="script.js"></script>
+
+<!-- ✅ INLINE FUNCTIONS -->
+<script>
+  function goToCart() {
+    window.location.href = "cart.html";
+  }
+
+  function goToLogin() {
+    window.location.href = "login.html"; // create this page next
+  }
+</script>
+
+</body>
+</html>
